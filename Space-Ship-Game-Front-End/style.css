@@ -1,0 +1,61 @@
+#game {
+    background-color: black;
+    height: 400px;
+    margin: 0 auto;
+    position: relative;
+    text-align: center;
+    width: 800px;
+  }
+
+#ship {
+    background-color: lawngreen;
+    width: 50px;
+    height: 30px;
+    position: absolute;
+    visibility: hidden;
+}
+
+/* MENU */
+.menuDiv {
+    height: 80%;
+    width: 40%;
+    color: lawngreen;
+    font-family: 'Geostar', cursive;
+    background-color: black;
+    color: lawngreen;
+    font-size: 2vh;
+    margin: 5%;
+    float: left;
+}
+
+.menu {
+    color: lawngreen;
+    font-family: 'Geostar', cursive;
+    background-color: black;
+    color: lawngreen;
+    width: 33vh;
+    font-size: 2vh;
+    margin: 5%;
+}
+.menu:focus {
+    outline-color: lawngreen;
+}
+
+input#name {
+    text-align: center;
+    background-color: black; 
+    margin-bottom: 1%; 
+}
+
+input#name:focus {
+    outline-color: lawngreen;
+}
+
+#highscoresbtn{
+    margin-bottom: 1%;
+}
+#instructionsbtn{
+    margin-bottom: 1%;
+}
+
+/* INSTRUCTIONS/HIGHSCORES */
