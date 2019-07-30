@@ -1,25 +1,25 @@
-console.log("this is wotrkig");
+// console.log("this is wotrkig");
 
-const submitButton = document.getElementById('submit-button')
+// const submitButton = document.getElementById('submit-button')
 
-submitButton.addEventListener("click", () => {
+// submitButton.addEventListener("click", () => {
 
-const input = document.getElementById('name-input').value
+// const input = document.getElementById('name-input').value
 
-console.log(input);
+// console.log(input);
 
-fetch("http://localhost:3000/users", {
-          method: "POST",
-          body: JSON.stringify({
-            name: input
-          }),
-          headers: {
-            "Content-Type": "application/json"
-          }
-        }).then(response => response.json())
+// fetch("http://localhost:3000/users", {
+//           method: "POST",
+//           body: JSON.stringify({
+//             name: input
+//           }),
+//           headers: {
+//             "Content-Type": "application/json"
+//           }
+//         }).then(response => response.json())
 
 
-})
+// })
 // _____________________________________________________________
 const ship = document.querySelector('#ship')
 const background = document.querySelector('#background')
