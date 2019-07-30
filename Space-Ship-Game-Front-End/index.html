@@ -1,23 +1,32 @@
-<!DOCTYPE html>
-<html lang="en" dir="ltr">
-  <head>
-    <meta charset="utf-8">
-    <title>My Diary</title>
-    <link rel="stylesheet" href="styles.css">
-    <!-- Bootstrap CSS -->
-       <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<html>
+<head>
+    <title>Project Ship</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <style>@import url('https://fonts.googleapis.com/css?family=Geostar&display=swap')</style>
+</head>
 
-  </head>
-  <body>
+<body>
+    <div id="game">
+        <div class="menuDiv">
+            <form id="form">
+                
+                <input id="name" class="menu" type="text" name="name" placeholder="Enter Name">
+                <input id="start" class="menu" type="submit" value="Start">
+            </form>
+            <button id="instructionsbtn" class="menu">Instructions</button>
+            <button id="highscoresbtn" class="menu">High Scores</button>
+            <button id="musicbtn" class="menu">Music On/Off</button>
+        </div>
 
-      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <a class="navbar-brand" href="#">Space Ship Game</a>
+        <div id="info" class="menuDiv">
+            
 
-        <input id="name-input" type="text" name="" value="input">
-        <button id="submit-button" type="button" name="button">Submit Name</button>
+        </div>
 
-      </nav>
+        <div id="ship"></div>
+    </div>
 
+    
     <script src="./src/index.js"></script>
-  </body>
+</body>
 </html>
