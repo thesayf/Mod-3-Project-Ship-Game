@@ -1,7 +1,3 @@
-// console.log("this is wotrkig");
-
-// const submitButton = document.getElementById('submit-button')
-
 // submitButton.addEventListener("click", () => {
 
 // const input = document.getElementById('name-input').value
@@ -67,22 +63,64 @@ instBtn.addEventListener("click", () => {
 
 highScoresBtn.addEventListener("click", () => {
     info.innerHTML = ""
+    fetch("http://localhost:3000/scores")
+    .then(res => res.json())
+    .then(allScores => displayHighScores(allScores))
     // INSERT HIGHSCORES HERE USING A FETCH AND RENDER SCORES
 })
 
+const displayHighScores = (allScores) => {
+let newScores = allScores.sort((a, b) => (a.score < b.score) ? 1 : -1)
+const highScoresList = document.createElement('div')
+highScoresList.id = "hi-scores"
+
+
+for(let i =0; i < newScores.length; i++){
+  const eachScoreEntry = document.createElement("p")
+  eachScoreEntry.innerText = `${i+1}` + "  " + `${newScores[i].user.name}`  +  "   " + `${newScores[i].score}`
+  highScoresList.appendChild(eachScoreEntry)
+}
+
+  info.appendChild(highScoresList)
+
+}
 
 
 
-
-
-// STARTING THE GAME
+// Create new Instance of a User
 form.addEventListener("submit", (event) => {
     event.preventDefault()
-    // fetch(UsersAPI) POST
-    // START GAME
+    const playerName = document.getElementById('name').value
+
+    if (playerName === "")
+    {
+      alert("Please Enter A Player Name to begin");
+    }
+    else{
+      fetch("http://localhost:3000/users", {
+                method: "POST",
+                body: JSON.stringify({
+                  name: playerName
+                }),
+                headers: {
+                  "Content-Type": "application/json"
+                }
+              }).then(response => response.json())
+              .then(user => startGame(user))
+    }
 })
 
-
-
-
-
+/// Starts a new game generates a fake high score and sends it to databse for the Instanceof the user
+const startGame = (user) => {
+let randomHighScore = Math.floor((Math.random() * 1000) + 1);
+fetch("http://localhost:3000/scores", {
+          method: "POST",
+          body: JSON.stringify({
+            user_id: user.user.id,
+            score: randomHighScore
+          }),
+          headers: {
+            "Content-Type": "application/json"
+          }
+        }).then(res => res.json())
+}
