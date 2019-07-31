@@ -74,18 +74,17 @@ let newScores = allScores.sort((a, b) => (a.score < b.score) ? 1 : -1)
 const highScoresList = document.createElement('div')
 highScoresList.id = "hi-scores"
 
-
 for(let i =0; i < newScores.length; i++){
   const eachScoreEntry = document.createElement("p")
-  eachScoreEntry.innerText = `${i+1}` + "  " + `${newScores[i].user.name}`  +  "   " + `${newScores[i].score}`
+  // eachScoreEntry.innerText = `${i+1}` + `${newScores[i].user.name}` +  "   " + `${newScores[i].score}`
+  eachScoreEntry.innerHTML = `${i+1} - ${newScores[i].user.name} - ${newScores[i].score}`
+
   highScoresList.appendChild(eachScoreEntry)
 }
 
   info.appendChild(highScoresList)
 
 }
-
-
 
 // Create new Instance of a User
 form.addEventListener("submit", (event) => {
