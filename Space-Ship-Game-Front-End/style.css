@@ -9,7 +9,7 @@
   }
 
 #ship {
-    
+
     /* width: 50px;
     height: 30px; */
     position: absolute;
@@ -19,7 +19,7 @@
     height: 0;
     /* border: 25px solid red; */
     /* border-right: 10px solid red; */
-    
+
     border-bottom: 25px solid red;
     border-right: 25px solid transparent;
     border-top: 25px solid red;
@@ -37,7 +37,7 @@
     height: 0;
     border: 25px solid transparent;
     border-left: 35px solid lawngreen;
-    
+
 } */
 
 /* MENU */
@@ -51,6 +51,17 @@
     font-size: 2vh;
     margin: 5%;
     float: left;
+}
+
+#game-over {
+  color: lawngreen;
+  font-family: 'Geostar', cursive;
+  background-color: black;
+  color: lawngreen;
+  width: 33vh;
+  font-size: 2vh;
+  margin: 5%;
+  visibility: hidden;
 }
 
 .menu {
@@ -68,8 +79,8 @@
 
 input#name {
     text-align: center;
-    background-color: black; 
-    margin-bottom: 1%; 
+    background-color: black;
+    margin-bottom: 1%;
 }
 
 input#name:focus {

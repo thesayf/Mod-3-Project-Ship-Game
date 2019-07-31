@@ -39,10 +39,15 @@ let ROCKS = 0
 let rockArray = []
 let LEVEL = 1
 let SCORE = 0
-let MULTIPLIER = 0
+let MULTIPLIER = 1
 let gameInterval = null
 let levelInterval = null
-
+let userID = 0
+let bigInterval = null
+let scoreInterval = null
+let scoresArray = []
+const gameOverButton = document.getElementById("game-over")
+let collisionInterval = null
 document.addEventListener('DOMContentLoaded', () => {
     sound()
     console.log("Loaded")
@@ -79,7 +84,7 @@ instBtn.addEventListener("click", () => {
 })
 
 highScoresBtn.addEventListener("click", () => {
-
+  console.log("this is working");
     rightmenu.innerHTML = ""
     fetch("http://localhost:3000/scores")
     .then(res => res.json())
@@ -101,7 +106,7 @@ for(let i =0; i < newScores.length; i++){
   highScoresList.appendChild(eachScoreEntry)
 }
 
-  info.appendChild(highScoresList)
+  rightmenu.appendChild(highScoresList)
 
 }
 
@@ -110,28 +115,50 @@ for(let i =0; i < newScores.length; i++){
 form.addEventListener("submit", (event) => {
     event.preventDefault()
 
+    const playerName = document.getElementById('name').value
+
+    if (playerName === "")
+    {
+      alert("Please Enter A Player Name to begin");
+    }
+    else{
+      fetch("http://localhost:3000/users", {
+                method: "POST",
+                body: JSON.stringify({
+                  name: playerName
+                }),
+                headers: {
+                  "Content-Type": "application/json"
+                }
+              }).then(res => res.json())
+              .then(user => runGame(user))
+
+    }
     // fetch(UsersAPI) POST
     // START GAME
-    runGame()
+
 })
 
-function runGame(){
+function runGame(user){
+  userID = 0
+  userID += user.user.id
+  console.log(userID);
   ship.style.visibility = "visible"
   ship.style.left = "-10px"
 
   ship.style.top = "175px"
-  
+
   rightmenu.style.visibility = "hidden"
   leftmenu.style.visibility = "hidden"
   document.addEventListener('keydown', moveShip)
-  
+
   LEVEL = 1
   SCORE = 0
   MULTIPLIER = 0
   ROCKS = 0
-  
 
-  setInterval(function(){
+
+  bigInterval = setInterval(function(){
     clearInterval(gameInterval)
     gameInterval = setInterval(function() {
       createRock(Math.floor(Math.random() * (GAME_HEIGHT - 20)))
@@ -140,7 +167,7 @@ function runGame(){
   // gameInterval = setInterval(function() {
   //   createRock(Math.floor(Math.random() * (GAME_HEIGHT - 20)))
   // }, 1000)
-
+  collisionInterval = setInterval(function(){checkArray(rockArray)}, 500)
 
   levelInterval = setInterval(function(){
     LEVEL += 0.1
@@ -231,11 +258,13 @@ function createRock(x) {
   rock.style.height = `${height}`
   let left = rock.style.left = 800
   game.appendChild(rock)
- 
+
   function moveRock() {
     rock.style.left = `${left -= LEVEL}px`;
 
-    checkCollision(rock)
+
+    // checkCollision(rock)
+
 
     if (left > -100) {
       window.requestAnimationFrame(moveRock)
@@ -251,11 +280,11 @@ function createRock(x) {
   rockArray.push(rock)
   // return rock
 }
-
-
-
+function checkArray(array){
+  array.forEach(rock => checkCollision(rock))
+}
 function checkCollision(rock) {
-  
+    console.log("Checking for collision")
     const shipLeftEdge = positionToInteger(ship.style.left)
     const shipRightEdge = shipLeftEdge + 50;
     const shipTopEdge = positionToInteger(ship.style.top)
@@ -266,59 +295,45 @@ function checkCollision(rock) {
     const rockBottomEdge = rockTopEdge + 20
 
     if (
-      // (rockLeftEdge <= shipLeftEdge && rockRightEdge >= shipLeftEdge) ||
-      // (rockLeftEdge >= shipLeftEdge && rockRightEdge <= shipRightEdge) ||
-      // (rockLeftEdge <= shipRightEdge && rockRightEdge >= shipRightEdge)
-    
       (rockLeftEdge >= shipLeftEdge && rockLeftEdge <= shipRightEdge && rockTopEdge <= shipBottomEdge && rockTopEdge >= shipTopEdge)||
       (rockRightEdge <= shipRightEdge && rockRightEdge >= shipLeftEdge && rockBottomEdge >= shipTopEdge && rockBottomEdge <= shipBottomEdge)||
       (rockLeftEdge >= shipLeftEdge && rockLeftEdge <= shipRightEdge && rockBottomEdge >= shipTopEdge && rockBottomEdge <= shipBottomEdge)||
       (rockRightEdge <= shipRightEdge && rockRightEdge >= shipLeftEdge && rockTopEdge <= shipBottomEdge && rockTopEdge >= shipTopEdge)
-    ){endGame()}
+    ){
+      endGame()
+     }
 
 }
 
-function endGame(){
+function endGame(user){
   console.log("GAME OVER")
-  
+ ship.style.visibility = "hidden"
+ rockArray.forEach(rock => rock.remove())
 
-  
-  
-// Create new Instance of a User
-form.addEventListener("submit", (event) => {
-    event.preventDefault()
-    const playerName = document.getElementById('name').value
+ rightmenu.style.visibility = "visible"
+ rockArray = []
+ clearInterval(bigInterval)
+ clearInterval(gameInterval)
+ clearInterval(levelInterval)
+ clearInterval(scoreInterval)
+ clearInterval(collisionInterval)
+ gameOverButton.style.visibility = "visible"
 
-    if (playerName === "")
-    {
-      alert("Please Enter A Player Name to begin");
-    }
-    else{
-      fetch("http://localhost:3000/users", {
-                method: "POST",
-                body: JSON.stringify({
-                  name: playerName
-                }),
-                headers: {
-                  "Content-Type": "application/json"
-                }
-              }).then(response => response.json())
-              .then(user => startGame(user))
-    }
-})
+ gameOverButton.addEventListener("click", () => {
+   leftmenu.style.visibility = "visible"
+   gameOverButton.style.visibility = "hidden"
+   fetch("http://localhost:3000/scores", {
+             method: "POST",
+             body: JSON.stringify({
+               user_id: userID,
+               score: SCORE * MULTIPLIER
+             }),
+             headers: {
+               "Content-Type": "application/json"
+             }
+           }).then(res => res.json()).then(console.log)
+ })
 
-/// Starts a new game generates a fake high score and sends it to databse for the Instanceof the user
-const startGame = (user) => {
-let randomHighScore = Math.floor((Math.random() * 1000) + 1);
-fetch("http://localhost:3000/scores", {
-          method: "POST",
-          body: JSON.stringify({
-            user_id: user.user.id,
-            score: randomHighScore
-          }),
-          headers: {
-            "Content-Type": "application/json"
-          }
-        }).then(res => res.json())
+  //
 
 }
