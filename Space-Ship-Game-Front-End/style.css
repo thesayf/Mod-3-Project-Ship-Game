@@ -5,15 +5,40 @@
     position: relative;
     text-align: center;
     width: 800px;
+    overflow: hidden;
   }
 
 #ship {
-    background-color: lawngreen;
-    width: 50px;
-    height: 30px;
+    
+    /* width: 50px;
+    height: 30px; */
     position: absolute;
     visibility: hidden;
+
+    width: 0;
+    height: 0;
+    /* border: 25px solid red; */
+    /* border-right: 10px solid red; */
+    
+    border-bottom: 25px solid red;
+    border-right: 25px solid transparent;
+    border-top: 25px solid red;
+    border-right: 25px solid transparent;
+
+    position: relative;
+    left: -25px;
 }
+/* #ship:after {
+    content: '';
+    position: absolute;
+    bottom: -25px;
+    left: 10px;
+    width: 0;
+    height: 0;
+    border: 25px solid transparent;
+    border-left: 35px solid lawngreen;
+    
+} */
 
 /* MENU */
 .menuDiv {
@@ -59,3 +84,10 @@ input#name:focus {
 }
 
 /* INSTRUCTIONS/HIGHSCORES */
+.rock {
+    background-color: white;
+    height: 20px;
+    width: 20px;
+    position: absolute;
+    border-radius: 30%;
+}
