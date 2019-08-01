@@ -9,7 +9,6 @@
   }
 
 #ship {
-
     /* width: 50px;
     height: 30px; */
     position: absolute;
@@ -23,12 +22,12 @@
     border-bottom: 25px solid red;
     border-right: 25px solid transparent;
     border-top: 25px solid red;
-    border-right: 25px solid transparent;
+    
 
     position: relative;
     left: -25px;
 }
-/* #ship:after {
+#ship:before {
     content: '';
     position: absolute;
     bottom: -25px;
@@ -38,7 +37,7 @@
     border: 25px solid transparent;
     border-left: 35px solid lawngreen;
 
-} */
+}
 
 /* MENU */
 .menuDiv {
@@ -101,4 +100,26 @@ input#name:focus {
     width: 20px;
     position: absolute;
     border-radius: 30%;
+    z-index: 2;
+}
+.bonus {
+    background-color: blue;
+    height: 20px;
+    width: 20px;
+    position: absolute;
+    border-radius: 30%;
+    z-index: 2; 
+    box-shadow: 4px 4px 15px rgba(142, 190, 245, 0.3);
+}
+
+
+#score {
+    z-index: 1;
+    top: -30px;
+    right: 0;
+    position: absolute;
+}
+
+#game-over:focus {
+    outline-color: lawngreen;
 }

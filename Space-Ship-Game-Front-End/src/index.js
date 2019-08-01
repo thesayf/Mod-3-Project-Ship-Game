@@ -45,12 +45,15 @@ let levelInterval = null
 let userID = 0
 let bigInterval = null
 let scoreInterval = null
-let scoresArray = []
-const gameOverButton = document.getElementById("game-over")
+let bonusInterval = null
+let bonusCollisionInterval = null
+let bonusArray = []
+
+
 let collisionInterval = null
 document.addEventListener('DOMContentLoaded', () => {
     sound()
-    console.log("Loaded")
+    // console.log("Loaded")
 })
 
 // MENU FUNCTIONALITY
@@ -79,12 +82,12 @@ instBtn.addEventListener("click", () => {
     rightmenu.innerHTML = ""
     const instructions = document.createElement('div')
     instructions.id = "instructions"
-    instructions.innerHTML = "<p>HOW TO PLAY:<br><br>Use the arrow keys (&larr;&rarr;&uarr;&darr;) to fly your ship through the asteroid field.<br><br>Use [SPACE] to shoot asteroids and bonus aliens!</p>"
+    instructions.innerHTML = "<p>HOW TO PLAY:<br><br>Use the arrow keys (&larr;&rarr;&uarr;&darr;) to fly your ship through the asteroid field.<br><br> Dodge the WHITE ASTEROIDS and try and collect the BLUE BONUSES!</p>"
     rightmenu.appendChild(instructions)
 })
 
 highScoresBtn.addEventListener("click", () => {
-  console.log("this is working");
+  // console.log("this is working");
     rightmenu.innerHTML = ""
     fetch("http://localhost:3000/scores")
     .then(res => res.json())
@@ -98,7 +101,7 @@ let newScores = allScores.sort((a, b) => (a.score < b.score) ? 1 : -1)
 const highScoresList = document.createElement('div')
 highScoresList.id = "hi-scores"
 
-for(let i =0; i < newScores.length; i++){
+for(let i =0; i < 8; i++){
   const eachScoreEntry = document.createElement("p")
   // eachScoreEntry.innerText = `${i+1}` + `${newScores[i].user.name}` +  "   " + `${newScores[i].score}`
   eachScoreEntry.innerHTML = `${i+1} - ${newScores[i].user.name} - ${newScores[i].score}`
@@ -142,7 +145,7 @@ form.addEventListener("submit", (event) => {
 function runGame(user){
   userID = 0
   userID += user.user.id
-  console.log(userID);
+  // console.log(userID);
   ship.style.visibility = "visible"
   ship.style.left = "-10px"
 
@@ -152,30 +155,43 @@ function runGame(user){
   leftmenu.style.visibility = "hidden"
   document.addEventListener('keydown', moveShip)
 
-  LEVEL = 1
+  LEVEL = 4
   SCORE = 0
-  MULTIPLIER = 0
+  MULTIPLIER = 1
   ROCKS = 0
 
+  gameInterval = setInterval(function() {
+    createRock(Math.floor(Math.random() * (GAME_HEIGHT - 20)))
+  }, 1000/LEVEL)
+  scoreInterval = setInterval(function(){
+    SCORE += 1
+  }, 1000/LEVEL)
+
+  bonusInterval = setInterval(function() {
+    createBonus(Math.floor(Math.random() * (GAME_HEIGHT - 20)))
+  }, 15000)
 
   bigInterval = setInterval(function(){
     clearInterval(gameInterval)
     gameInterval = setInterval(function() {
       createRock(Math.floor(Math.random() * (GAME_HEIGHT - 20)))
     }, 1000/LEVEL)
+    clearInterval(scoreInterval)
+    scoreInterval = setInterval(function(){
+      SCORE += 1
+    }, 1000/LEVEL)
   }, 10000)
   // gameInterval = setInterval(function() {
   //   createRock(Math.floor(Math.random() * (GAME_HEIGHT - 20)))
   // }, 1000)
   collisionInterval = setInterval(function(){checkArray(rockArray)}, 500)
+  bonusCollisionInterval = setInterval(function(){checkBonusArray(bonusArray)}, 350)
 
   levelInterval = setInterval(function(){
     LEVEL += 0.1
   }, 5000)
 
-  scoreInterval = setInterval(function(){
-    SCORE += 1
-  }, 1000)
+ 
 }
 
 // SHIP MOVEMENT_______________________________________
@@ -199,7 +215,6 @@ function moveShip(e) {
 }
 
 function moveShipLeft(){
-  console.log("Left")
   window.requestAnimationFrame(function() {
     const left = positionToInteger(ship.style.left)
 
@@ -210,7 +225,7 @@ function moveShipLeft(){
 }
 
 function moveShipRight(){
-  console.log("Right")
+  // console.log("Right")
   window.requestAnimationFrame(function() {
     const left = positionToInteger(ship.style.left)
     if (left < 730) {
@@ -220,21 +235,21 @@ function moveShipRight(){
 }
 
 function moveShipDown(){
-  console.log("Down")
+  // console.log("Down")
   window.requestAnimationFrame(function() {
     const top = positionToInteger(ship.style.top)
 
-    if (top < 375) {
+    if (top < 350) {
       ship.style.top = `${top + 10}px`;
     }
   })
 }
 function moveShipUp(){
-  console.log("Up")
+  // console.log("Up")
   window.requestAnimationFrame(function() {
     const top = positionToInteger(ship.style.top)
 
-    if (top > -20) {
+    if (top > 0) {
       ship.style.top = `${top - 10}px`;
     }
   })
@@ -262,7 +277,7 @@ function createRock(x) {
   function moveRock() {
     rock.style.left = `${left -= LEVEL}px`;
 
-
+// rock.addEventListener("click", (rock) => remove(rock) )
     // checkCollision(rock)
 
 
@@ -284,7 +299,7 @@ function checkArray(array){
   array.forEach(rock => checkCollision(rock))
 }
 function checkCollision(rock) {
-    console.log("Checking for collision")
+    // console.log("Checking for collision")
     const shipLeftEdge = positionToInteger(ship.style.left)
     const shipRightEdge = shipLeftEdge + 50;
     const shipTopEdge = positionToInteger(ship.style.top)
@@ -306,18 +321,34 @@ function checkCollision(rock) {
 }
 
 function endGame(user){
-  console.log("GAME OVER")
- ship.style.visibility = "hidden"
+  // console.log("GAME OVER")
+  // console.log(SCORE)
+  let showScore = document.createElement('div')
+  showScore.class = "menu"
+  showScore.innerText = `SCORE: ${SCORE * MULTIPLIER}`
+  
+  rightmenu.innerHTML = '<button id="game-over" type="button" name="game-over">Game Over</button>'
+  rightmenu.appendChild(showScore)
+  const gameOverButton = document.getElementById("game-over")
+ 
+ship.style.visibility = "hidden"
  rockArray.forEach(rock => rock.remove())
+ bonusArray.forEach(bonus => bonus.remove())
 
  rightmenu.style.visibility = "visible"
+ 
  rockArray = []
+ bonusArray = []
  clearInterval(bigInterval)
  clearInterval(gameInterval)
  clearInterval(levelInterval)
  clearInterval(scoreInterval)
  clearInterval(collisionInterval)
+ clearInterval(bonusInterval)
+ clearInterval(bonusCollisionInterval)
  gameOverButton.style.visibility = "visible"
+ 
+ 
 
  gameOverButton.addEventListener("click", () => {
    leftmenu.style.visibility = "visible"
@@ -335,5 +366,71 @@ function endGame(user){
  })
 
   //
+
+}
+// __________________________________________________
+
+const scoreDisplay = document.querySelector('#score')
+
+setInterval(function(){scoreDisplay.innerText = `Score: ${SCORE} x${MULTIPLIER}`}, 500)
+
+
+
+function createBonus(x) {
+  const bonus = document.createElement('div')
+  bonus.className = 'bonus'
+  bonus.style.top = `${x}px`
+  let width = bonus.style.width = 20
+  bonus.style.width = `${width}`
+  let height = bonus.style.height = 20
+  bonus.style.height = `${height}`
+  let left = bonus.style.left = 800
+  game.appendChild(bonus)
+
+  function moveBonus() {
+    bonus.style.left = `${left -= 3}px`;
+
+
+
+
+    if (left > -100) {
+      window.requestAnimationFrame(moveBonus)
+    } else {
+      bonus.remove()
+    }
+  }
+
+  window.requestAnimationFrame(moveBonus)
+
+
+ 
+  bonusArray.push(bonus)
+  // return rock
+}
+
+function checkBonusArray(array){
+  array.forEach(bonus => checkBonusCollision(bonus))
+}
+
+function checkBonusCollision(bonus) {
+  // console.log("Checking for collision")
+  const shipLeftEdge = positionToInteger(ship.style.left)
+  const shipRightEdge = shipLeftEdge + 50;
+  const shipTopEdge = positionToInteger(ship.style.top)
+  const shipBottomEdge = shipTopEdge + 50;
+  const bonusLeftEdge = positionToInteger(bonus.style.left)
+  const bonusTopEdge = positionToInteger(bonus.style.top)
+  const bonusRightEdge = bonusLeftEdge + 20
+  const bonusBottomEdge = bonusTopEdge + 20
+
+  if (
+    (bonusLeftEdge >= shipLeftEdge && bonusLeftEdge <= shipRightEdge && bonusTopEdge <= shipBottomEdge && bonusTopEdge >= shipTopEdge)||
+    (bonusRightEdge <= shipRightEdge && bonusRightEdge >= shipLeftEdge && bonusBottomEdge >= shipTopEdge && bonusBottomEdge <= shipBottomEdge)||
+    (bonusLeftEdge >= shipLeftEdge && bonusLeftEdge <= shipRightEdge && bonusBottomEdge >= shipTopEdge && bonusBottomEdge <= shipBottomEdge)||
+    (bonusRightEdge <= shipRightEdge && bonusRightEdge >= shipLeftEdge && bonusTopEdge <= shipBottomEdge && bonusTopEdge >= shipTopEdge)
+  ){
+    MULTIPLIER +=1
+    bonus.remove()
+   }
 
 }
